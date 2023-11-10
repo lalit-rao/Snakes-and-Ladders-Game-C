@@ -3,7 +3,7 @@
 #include <time.h>
 
 #define BOARD_SIZE 100
-#define NUM_PLAYERS_MAX 4
+#define NUM_PLAYERS 4
 
 // Structure to store player information
 struct Player {
@@ -12,22 +12,22 @@ struct Player {
     struct Player *next;
 };
 
-// Function to roll the dice and return the result
+// Function to roll the dice
 int rollDice() {
     return (rand() % 6) + 1;
 }
 
-// Function to check for snakes and ladders and inform the action
+// Function to check for snakes and ladders
 int checkSnakesAndLadders(int position, int* action) {
     // Define snake and ladder positions
     int snakePositions[] = {17, 52, 70, 80, 88, 92, 96};
     int ladderPositions[] = {3, 5, 11, 19, 21, 35, 39, 44, 49, 57, 64, 71};
 
-    // Check for snake and ladder positions using a switch statement
+    // Snake and Ladder positions using Switch case
     switch (position) {
         case 3:
             *action = 1; // 1 represents climbing a ladder
-            return 22;
+            return 22; // position to go
         case 5:
             *action = 1;
             return 8;
@@ -77,27 +77,26 @@ int checkSnakesAndLadders(int position, int* action) {
             *action = 1;
             return 77;
         default:
-            // Check for snake and ladder positions in the arrays
             for (int i = 0; i < sizeof(snakePositions) / sizeof(snakePositions[0]); i++) {
                 if (position == snakePositions[i]) {
-                    *action = 2; // 2 represents falling down a snake
-                    return 4;     // Example position to fall to
+                    *action = 2;
+                    return 4;
                 }
             }
 
             for (int i = 0; i < sizeof(ladderPositions) / sizeof(ladderPositions[0]); i++) {
                 if (position == ladderPositions[i]) {
-                    *action = 1; // 1 represents climbing a ladder
-                    return 22;    // Example position to climb to
+                    *action = 1;
+                    return 22;
                 }
             }
 
-            // Ensure the player's position doesn't go beyond the board size
+            // When a player wins max position = 100
             if (position > 100) {
-                *action = 0; // 0 represents no special action
-                return 100; // Limit the position to 100
+                *action = 0;
+                return 100;
             }
-            *action = 0; // 0 represents no special action
+            *action = 0;
             return position;
     }
 }
@@ -117,11 +116,11 @@ int main() {
     int numPlayers, numDice, difficulty;
 
     // Input the number of players
-    printf("Enter the number of players (2-%d):", NUM_PLAYERS_MAX);
+    printf("Enter the number of players (2-%d):", NUM_PLAYERS);
     scanf("%d", &numPlayers);
 
-    if (numPlayers < 2 || numPlayers > NUM_PLAYERS_MAX) {
-        printf("Invalid number of players. Please enter a number between 2 and %d.\n", NUM_PLAYERS_MAX);
+    if (numPlayers < 2 || numPlayers > NUM_PLAYERS) {
+        printf("Invalid number of players. Please enter a number between 2 and %d.\n", NUM_PLAYERS);
         return 1;
     }
 
@@ -138,7 +137,7 @@ int main() {
 
     numDice = (difficulty == 1) ? 1 : (difficulty == 2) ? 2 : 3;
 
-    // Initialize players as a linked list
+    // Initialize players
     struct Player *head = NULL;
     for (int i = 0; i < numPlayers; i++) {
         struct Player *newPlayer = (struct Player *) malloc(sizeof(struct Player));
@@ -159,8 +158,8 @@ int main() {
         struct Player *current = head;
         while (current != NULL) {
             printf("\n%s's turn. Press enter to roll the dice.", current->name);
-            getchar(); // Clear the newline character
-            getchar(); // Wait for user input
+            getchar();
+            getchar();
             int diceRoll = 0;
             for (int j = 0; j < numDice; j++) {
                 diceRoll += rollDice();
@@ -175,9 +174,9 @@ int main() {
             }
             current->position = newPosition;
 
-            // Update winner status
+            // Update winner
             if (current->position == BOARD_SIZE) {
-                winner = 1; // Player wins
+                winner = 1;
                 break;
             }
 
@@ -200,8 +199,7 @@ int main() {
 
     // Display the leaderboard
     displayLeaderboard(head);
-
-    // Free memory allocated for players
+    
     struct Player *current = head;
     while (current != NULL) {
         struct Player *next = current->next;
